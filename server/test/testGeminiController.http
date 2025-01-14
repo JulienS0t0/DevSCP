@@ -1,0 +1,11 @@
+### Test the /generate endpoint
+POST http://localhost:6969/generate
+Content-Type: application/json
+
+{
+  "prompt": "Diese intervention war sehr schwierig. Ich müssen viel machen und es klappte nicht ales so gut. Aber ich habe wechseln rohre und kabel und jetzt licht funktioniert wieder"
+}
+
+### Test other things
+GET http://localhost:6969/generate
+Content-Type: application/json
