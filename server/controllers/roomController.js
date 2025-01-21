@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 // Ajouter une salle avec un embedding Unity
 exports.createRoom = async (req, res) => {
   try {
+    console.log(req.body);
     const { roomId, number, building, campus, embeddingId } = req.body;
 
     const newRoom = new Room({
@@ -15,6 +16,7 @@ exports.createRoom = async (req, res) => {
     });
 
     await newRoom.save();
+    console.log("ok");
     res.status(201).json(newRoom);
   } catch (error) {
     res.status(400).json({ message: "Erreur lors de la création", error });
