@@ -11,4 +11,8 @@ router.get("/:id", getRoom);
 
 router.get("/:id/info", getRoomInfo);
 
+router.get("/:id/embeddings", getRoomEmbeddings);
+
+router.get("/:id/interventions", getRoomInterventions);
+
 module.exports = router;

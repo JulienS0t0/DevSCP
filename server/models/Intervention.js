@@ -6,8 +6,7 @@ const interventionSchema = new mongoose.Schema({
   media: {
     photos: [{ type: mongoose.Schema.Types.ObjectId }], // IDs GridFS des photos
     videos: [{ type: mongoose.Schema.Types.ObjectId }], // IDs GridFS des vidéos
-  },
-  date: { type: Date, default: Date.now },
+  }
 });
 
 module.exports = mongoose.model("Intervention", interventionSchema);
