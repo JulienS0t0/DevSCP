@@ -1,5 +1,4 @@
 const Room = require("../models/Room");
-const mongoose = require("mongoose");
 
 // Ajouter une salle avec un embedding Unity
 exports.createRoom = async (req, res) => {
@@ -32,7 +31,7 @@ exports.createRoom = async (req, res) => {
 // Obtenir une salle par ID avec l'embedding
 exports.getRoom = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id).populate("unityEmbeddings");
+    const room = await Room.findOne({ roomId: req.params.id }).populate("unityEmbeddings");
     if (!room) {
       return res.status(404).json({ message: "Salle introuvable" });
     }
@@ -44,7 +43,7 @@ exports.getRoom = async (req, res) => {
 
 exports.getRoomInfo = async (req, res) => {
     try {
-      const room = await Room.findById(req.params.id).select("-unityEmbeddings");
+      const room = await Room.findOne({ roomId: req.params.id }).select("-unityEmbeddings");
       if (!room) {
         return res.status(404).json({ message: "Salle introuvable" });
       }
@@ -56,7 +55,7 @@ exports.getRoomInfo = async (req, res) => {
 
 exports.getRoomEmbeddings = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id).populate("unityEmbeddings");
+    const room = await Room.findOne({ roomId: req.params.id }).populate("unityEmbeddings");
     if (!room) {
       return res.status(404).json({ message: "Salle introuvable" });
     }
@@ -68,7 +67,7 @@ exports.getRoomEmbeddings = async (req, res) => {
 
 exports.getRoomInterventions = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id).populate("interventions");
+    const room = await Room.findOne({ roomId: req.params.id }).populate("interventions");
     if (!room) {
       return res.status(404).json({ message: "Salle introuvable" });
     }
