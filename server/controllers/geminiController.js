@@ -1,17 +1,14 @@
-// Usage example:
-const GeminiService = require('../service/geminiService');
 const express = require('express');
+const GeminiService = require('../service/geminiService');
 require('dotenv').config()
 
-const app = express();
-const port = 6969;
+const router = express.Router();
 const apiKey = process.env.GEMINI_API_KEY;
-
-app.use(express.json());
-
 const service = new GeminiService(apiKey);
 
-app.post('/generate', async (req, res) => {
+router.use(express.json());
+
+router.post('/generate', async (req, res) => {
     try {
         const { prompt } = req.body;
 
@@ -31,9 +28,4 @@ app.post('/generate', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
-
-
-
+module.exports = router;
