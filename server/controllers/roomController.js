@@ -4,24 +4,30 @@ const mongoose = require("mongoose");
 // Ajouter une salle avec un embedding Unity
 exports.createRoom = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log("Données reçues :", req.body);
     const { roomId, number, building, campus, embeddingId } = req.body;
+
+    if (!roomId || !number || !building || !campus) {
+      throw new Error("Tous les champs obligatoires ne sont pas fournis.");
+    }
 
     const newRoom = new Room({
       roomId,
       number,
       building,
       campus,
-      unityEmbeddings: embeddingId, // ID du fichier GridFS
+      unityEmbeddings: embeddingId,
     });
 
     await newRoom.save();
-    console.log("ok");
+    console.log("Salle créée :", newRoom);
     res.status(201).json(newRoom);
   } catch (error) {
-    res.status(400).json({ message: "Erreur lors de la création", error });
+    console.error("Erreur lors de la création :", error);
+    res.status(400).json({ message: "Erreur lors de la création", error: error.message });
   }
 };
+
 
 // Obtenir une salle par ID avec l'embedding
 exports.getRoom = async (req, res) => {
