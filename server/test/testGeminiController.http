@@ -3,7 +3,7 @@ POST http://localhost:6969/generate
 Content-Type: application/json
 
 {
-  "prompt": "Diese intervention war sehr schwierig. Ich müssen viel machen und es klappte nicht ales so gut. Aber ich habe wechseln rohre und kabel und jetzt licht funktioniert wieder"
+  "prompt": "This intervention difficult, I made a lot and not working always. But the I change cable and pipe and now light works again"
 }
 
 ### Test other things

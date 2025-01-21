@@ -1,16 +1,18 @@
 // Usage example:
 const GeminiService = require('../service/geminiService');
 const express = require('express');
+require('dotenv').config()
 
 const app = express();
 const port = 6969;
-const apiKey = '';
+const apiKey = process.env.GEMINI_API_KEY;
 
 app.use(express.json());
 
 const service = new GeminiService(apiKey);
 
 app.post('/generate', async (req, res) => {
+    console.log(apiKey)
     try {
         const { prompt } = req.body;
 
