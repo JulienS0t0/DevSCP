@@ -36,7 +36,19 @@ const storage = new GridFsStorage({
 });
 const upload = multer({ storage });
 
+const roomRoutes = require("./routes/roomRoutes");
+app.use("/api/rooms", roomRoutes);
+
+const interventionRoutes = require("./routes/interventionRoutes");
+app.use("/api/interventionRoutes", interventionRoutes);
+
+
 // Routes pour fichiers
+
+app.get("/", (req, res) => {
+  res.send("Serveur Node.js opérationnel !");
+});
+
 app.post("/upload", upload.single("file"), (req, res) => {
   res.status(201).json({ fileId: req.file.id, filename: req.file.filename });
 });
@@ -52,4 +64,8 @@ app.get("/file/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Erreur serveur", error: err });
   }
+});
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Serveur démarré sur le port ${PORT}`);
 });
