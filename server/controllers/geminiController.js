@@ -12,7 +12,6 @@ app.use(express.json());
 const service = new GeminiService(apiKey);
 
 app.post('/generate', async (req, res) => {
-    console.log(apiKey)
     try {
         const { prompt } = req.body;
 
