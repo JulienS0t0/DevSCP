@@ -1,6 +1,5 @@
 const express = require('express');
 const GeminiService = require('../service/geminiService');
-require('dotenv').config()
 
 const router = express.Router();
 const apiKey = process.env.GEMINI_API_KEY;
@@ -8,7 +7,8 @@ const service = new GeminiService(apiKey);
 
 router.use(express.json());
 
-router.post('/generate', async (req, res) => {
+// Generate Gemini response
+exports.generateResponse = async (req, res) => {
     try {
         const { prompt } = req.body;
 
@@ -26,6 +26,9 @@ router.post('/generate', async (req, res) => {
     } catch (error) {
         res.status(500).send({ error: 'Something went wrong' });
     }
-});
+};
+
+// Register route
+router.post('/generate', exports.generateResponse);
 
 module.exports = router;

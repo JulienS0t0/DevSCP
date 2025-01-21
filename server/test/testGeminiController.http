@@ -1,5 +1,5 @@
 ### Test the /generate endpoint
-POST http://localhost:3000/generate
+POST http://localhost:3000/api/gemini/generate
 Content-Type: application/json
 
 {
