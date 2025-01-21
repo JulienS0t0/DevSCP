@@ -1,0 +1,14 @@
+### Test the creation of a room
+POST http://localhost:3000/api/rooms
+Content-Type: application/json
+
+{
+  "roomId": "R001",
+  "number": "101",
+  "building": "A",
+  "campus": "Campus1"
+}
+
+### Test getting a room
+GET http://localhost:3000/api/rooms/R001
+Content-Type: application/json
