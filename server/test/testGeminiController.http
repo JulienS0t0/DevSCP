@@ -1,5 +1,5 @@
 ### Test the /generate endpoint
-POST http://localhost:6969/generate
+POST http://localhost:3000/generate
 Content-Type: application/json
 
 {
@@ -7,5 +7,5 @@ Content-Type: application/json
 }
 
 ### Test other things
-GET http://localhost:6969/generate
+GET http://localhost:3000/generate
 Content-Type: application/json
