@@ -45,3 +45,26 @@ exports.getRoomInfo = async (req, res) => {
       res.status(500).json({ message: "Erreur serveur", error });
     }
   };
+
+exports.getRoomEmbeddings = async (req, res) => {
+  try {
+    const room = await Room.findById(req.params.id).populate("unityEmbeddings");
+    if (!room) {
+      return res.status(404).json({ message: "Salle introuvable" });
+    }
+    res.status(200).json(room.unityEmbeddings);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+};
+
+exports.getRoomInterventions = async (req, res) => {
+  try {
+    const room = await Room.findById(req.params.id).populate("interventions");
+    if (!room) {
+      return res.status(404).json({ message: "Salle introuvable" });
+    }
+    res.status(200).json(room.interventions);
+  } catch (error) { 
+    res.status(500).json({ message: "Erreur serveur", error });
+  }};
