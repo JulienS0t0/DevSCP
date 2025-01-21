@@ -5,6 +5,7 @@ const cors = require("cors");
 const multer = require("multer");
 const { GridFsStorage } = require("multer-gridfs-storage");
 const Grid = require("gridfs-stream");
+require('dotenv').config() // This is used to enable .env support (to get Gemini API Key)
 
 const app = express();
 
@@ -44,7 +45,11 @@ const roomRoutes = require("./routes/roomRoutes");
 app.use("/api/rooms", roomRoutes);
 
 const interventionRoutes = require("./routes/interventionRoutes");
-app.use("/api/interventions", interventionRoutes);
+
+app.use("/api/interventionRoutes", interventionRoutes);
+
+const geminiRoutes = require("./routes/geminiRoutes");
+app.use("/api/gemini", geminiRoutes);
 
 // Routes pour fichiers
 app.post("/upload", upload.single("file"), (req, res) => {

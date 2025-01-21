@@ -1,0 +1,11 @@
+### Test the /generate endpoint
+POST http://localhost:3000/api/gemini/generate
+Content-Type: application/json
+
+{
+  "prompt": "This intervention difficult, I made a lot and not working always. But the I change cable and pipe and now light works again"
+}
+
+### Test other things
+GET http://localhost:3000/generate
+Content-Type: application/json
