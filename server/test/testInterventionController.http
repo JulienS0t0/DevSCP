@@ -1,0 +1,29 @@
+### Test creating an intervention -> Ensure room exists
+POST http://localhost:3000/api/interventions
+Content-Type: application/json
+
+{
+  "interventionId": "I001",
+  "roomId": "R001",
+  "notes": "Initial notes"
+}
+
+
+### Test getting an intervention
+GET http://localhost:3000/api/interventions/I001
+Content-Type: application/json
+
+
+### Test updating an intervention -> Ensure room exists
+PUT http://localhost:3000/api/interventions/I001
+Content-Type: application/json
+
+{
+  "roomId": "R002",
+  "notes": "Updated notes"
+}
+
+
+### Test deleting an intervention
+DELETE http://localhost:3000/api/interventions/I001
+Content-Type: application/json

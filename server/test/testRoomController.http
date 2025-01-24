@@ -35,10 +35,21 @@ Content-Type: application/json
   "roomId": "R001",
   "number": "102",
   "building": "B",
-  "campus": "Campus2"
+  "campus": "Polytech"
 }
 
 
 ### Test deleting a room
 DELETE http://localhost:3000/api/rooms/R001
 Content-Type: application/json
+
+### Test the creation of another room (used for intervention)
+POST http://localhost:3000/api/rooms
+Content-Type: application/json
+
+{
+  "roomId": "R002",
+  "number": "303",
+  "building": "C",
+  "campus": "Valrose"
+}
