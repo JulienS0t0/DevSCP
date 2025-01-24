@@ -12,3 +12,33 @@ Content-Type: application/json
 ### Test getting a room
 GET http://localhost:3000/api/rooms/R001
 Content-Type: application/json
+
+### Test getting room info (excluding embeddings)
+GET http://localhost:3000/api/rooms/R001/info
+Content-Type: application/json
+
+
+### Test getting room embeddings
+GET http://localhost:3000/api/rooms/R001/embeddings
+Content-Type: application/json
+
+
+### Test getting room interventions
+GET http://localhost:3000/api/rooms/R001/interventions
+Content-Type: application/json
+
+### Test updating a room
+PUT http://localhost:3000/api/rooms/R001
+Content-Type: application/json
+
+{
+  "roomId": "R001",
+  "number": "102",
+  "building": "B",
+  "campus": "Campus2"
+}
+
+
+### Test deleting a room
+DELETE http://localhost:3000/api/rooms/R001
+Content-Type: application/json
