@@ -19,7 +19,6 @@ PUT http://localhost:3000/api/interventions/I001
 Content-Type: application/json
 
 {
-  "roomId": "R002",
   "notes": "Updated notes"
 }
 

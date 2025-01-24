@@ -50,17 +50,11 @@ exports.getIntervention = async (req, res) => {
 // Mettre à jour une intervention
 exports.updateIntervention = async (req, res) => {
   try {
-    const { interventionId, roomId, notes, photoIds, videoIds } = req.body;
-
-    const existingRoom = await Room.findOne({ roomId: roomId });
-    if (!existingRoom) {
-      return res.status(404).json({ message: "Room not found" });
-    }
+    const { interventionId, notes, photoIds, videoIds } = req.body;
 
     const updatedIntervention = await Intervention.findOneAndUpdate(
         { interventionId: req.params.id },
         {
-          roomId: existingRoom._id,
           notes,
           media: {
             photos: photoIds,
@@ -82,21 +76,30 @@ exports.updateIntervention = async (req, res) => {
   }
 };
 
-
 // Supprimer une intervention
 exports.deleteIntervention = async (req, res) => {
   try {
+    // Find and delete the intervention
     const deletedIntervention = await Intervention.findOneAndDelete({ interventionId: req.params.id });
 
     if (!deletedIntervention) {
       return res.status(404).json({ message: "Intervention introuvable" });
     }
 
+    // Remove the intervention reference from the room's interventions array
+    const room = await Room.findById(deletedIntervention.roomId);
+    if (room) {
+      room.interventions = room.interventions.filter(id => id.toString() !== deletedIntervention._id.toString());
+      await room.save();
+    }
+
     console.log("Intervention supprimée :", deletedIntervention);
     res.status(200).json({ message: "Intervention supprimée", intervention: deletedIntervention });
   } catch (error) {
     console.error("Erreur lors de la suppression :", error);
-    res.status(400).json({ message: "Erreur lors de la suppression", error: error.message });
+    res.status(400).json({
+      message: "Erreur lors de la suppression", error: error.message
+    });
   }
 };
 
