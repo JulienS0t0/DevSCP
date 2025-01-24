@@ -50,7 +50,7 @@ exports.getIntervention = async (req, res) => {
 // Mettre à jour une intervention
 exports.updateIntervention = async (req, res) => {
   try {
-    const { interventionId, notes, photoIds, videoIds } = req.body;
+    const { notes, photoIds, videoIds } = req.body;
 
     const updatedIntervention = await Intervention.findOneAndUpdate(
         { interventionId: req.params.id },

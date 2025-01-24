@@ -81,15 +81,15 @@ exports.getRoomInterventions = async (req, res) => {
 // Mettre à jour une salle
 exports.updateRoom = async (req, res) => {
   try {
-    const { roomId, number, building, campus, embeddingId } = req.body;
+    const { number, building, campus, embeddingId } = req.body;
 
-    if (!roomId || !number || !building || !campus) {
+    if (!number || !building || !campus) {
       throw new Error("Tous les champs obligatoires ne sont pas fournis.");
     }
 
     const updatedRoom = await Room.findOneAndUpdate(
         { roomId: req.params.id },
-        { roomId, number, building, campus, unityEmbeddings: embeddingId },
+        { number, building, campus, unityEmbeddings: embeddingId },
         { new: true }
     );
 

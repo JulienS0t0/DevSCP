@@ -32,7 +32,6 @@ PUT http://localhost:3000/api/rooms/R001
 Content-Type: application/json
 
 {
-  "roomId": "R001",
   "number": "102",
   "building": "B",
   "campus": "Polytech"
