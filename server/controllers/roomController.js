@@ -72,9 +72,11 @@ exports.getRoomInterventions = async (req, res) => {
       return res.status(404).json({ message: "Salle introuvable" });
     }
     res.status(200).json(room.interventions);
-  } catch (error) { 
+  } catch (error) {
+    console.error("Error fetching room interventions:", error);
     res.status(500).json({ message: "Erreur serveur", error });
-  }};
+  }
+};
 
 // Mettre à jour une salle
 exports.updateRoom = async (req, res) => {

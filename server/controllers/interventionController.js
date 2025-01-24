@@ -16,12 +16,17 @@ exports.createIntervention = async (req, res) => {
       roomId: existingRoom._id,
       notes,
       media: {
-        photos: photoIds, // Liste des IDs GridFS des photos
-        videos: videoIds, // Liste des IDs GridFS des vidéos
+        photos: photoIds,
+        videos: videoIds,
       },
     });
 
     await newIntervention.save();
+
+    // Add the new intervention to the room's interventions array
+    existingRoom.interventions.push(newIntervention._id);
+    await existingRoom.save();
+
     res.status(201).json(newIntervention);
   } catch (error) {
     res.status(400).json({ message: "Erreur lors de la création", error });
