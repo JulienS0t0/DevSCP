@@ -45,8 +45,7 @@ const roomRoutes = require("./routes/roomRoutes");
 app.use("/api/rooms", roomRoutes);
 
 const interventionRoutes = require("./routes/interventionRoutes");
-
-app.use("/api/interventionRoutes", interventionRoutes);
+app.use("/api/interventions", interventionRoutes);
 
 const geminiRoutes = require("./routes/geminiRoutes");
 app.use("/api/gemini", geminiRoutes);
