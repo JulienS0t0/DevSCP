@@ -1,0 +1,12 @@
+//Create -> Adds automatically to intervention (an image is in the folder (img.png) that shows my config)
+curl --location 'http://localhost:3000/api/interventions/I001/media' \
+--form 'file=@"/C:/Users/flobo/Downloads/istockphoto-1317323736-612x612.png"'
+
+//Lists all media of an intervention (all IDs)
+curl --location 'http://localhost:3000/api/interventions/I001/media'
+
+// Gets a single media
+curl --location 'http://localhost:3000/api/interventions/I001/media/6797bebfaab1352cc14e7efc'
+
+// Deletes a media
+curl --location --request DELETE 'http://localhost:3000/api/interventions/I001/media/6797bf382811f3daa8d6fa0f'

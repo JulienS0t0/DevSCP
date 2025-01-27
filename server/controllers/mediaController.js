@@ -8,7 +8,6 @@ mongoose.connection.once("open", () => {
 });
 
 const addMedia = async (req, res) => {
-    const { interventionId } = req.params;
     const file = req.file;
 
     if (!file) {
@@ -61,7 +60,7 @@ const deleteMedia = async (req, res) => {
 
     try {
         await gfsBucket.delete(new mongoose.Types.ObjectId(mediaId));
-        const intervention = await Intervention.findOne({ interventionId: req.params.interventionId });
+        const intervention = await Intervention.findOne({ interventionId: interventionId });
         intervention.media = intervention.media.filter((id) => id.toString() !== mediaId);
         await intervention.save();
         res.status(200).json({ message: "File deleted successfully" });
@@ -72,8 +71,6 @@ const deleteMedia = async (req, res) => {
 };
 
 const getAllMedia = async (req, res) => {
-    const { interventionId } = req.params;
-
     try {
         const intervention = await Intervention.findOne({ interventionId: req.params.interventionId }).populate("media");
         res.status(200).json({ media: intervention.media });
