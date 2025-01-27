@@ -15,10 +15,7 @@ exports.createIntervention = async (req, res) => {
       interventionId,
       roomId: existingRoom._id,
       notes,
-      media: {
-        photos: photoIds,
-        videos: videoIds,
-      },
+      media: [],
     });
 
     await newIntervention.save();
@@ -56,10 +53,7 @@ exports.updateIntervention = async (req, res) => {
         { interventionId: req.params.id },
         {
           notes,
-          media: {
-            photos: photoIds,
-            videos: videoIds,
-          },
+          media: [],
         },
         { new: true }
     );

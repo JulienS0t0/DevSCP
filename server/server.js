@@ -3,9 +3,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const multer = require("multer");
-const { GridFsStorage } = require("multer-gridfs-storage");
-const Grid = require("gridfs-stream");
-require('dotenv').config() // This is used to enable .env support (to get Gemini API Key)
+const { GridFSBucket } = require("mongodb");
+require("dotenv").config(); // This is used to enable .env support (to get Gemini API Key)
 
 const app = express();
 
@@ -13,32 +12,61 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// Connexion à MongoDB
+// Connection to MongoDB
 const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/DB";
 mongoose
-  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("Connecté à MongoDB"))
-  .catch((err) => console.error("Erreur de connexion à MongoDB :", err));
+    .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("Connected to MongoDB"))
+    .catch((err) => console.error("Error connecting to MongoDB:", err));
 
-let gfs;
 const conn = mongoose.connection;
+let gfsBucket;
 conn.once("open", () => {
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection("uploads");
+  gfsBucket = new GridFSBucket(conn.db, { bucketName: 'uploads' });
+  console.log("GridFSBucket initialized");
 });
 
-// Multer GridFS Storage
-const storage = new GridFsStorage({
-  url: mongoURI,
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, file) => {
-    return {
-      filename: `${Date.now()}-${file.originalname}`,
-      bucketName: "uploads",
-    };
-  },
-});
+// Set up multer for file handling
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+// Route for file upload
+app.post("/upload", upload.single("file"), (req, res) => {
+  const file = req.file;
+  if (!file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const uploadStream = gfsBucket.openUploadStream(file.originalname);
+  uploadStream.end(file.buffer);
+
+  uploadStream.on("finish", () => {
+    res.status(201).json({ message: "File uploaded successfully", fileId: uploadStream.id });
+  });
+
+  uploadStream.on("error", (err) => {
+    console.error("Error uploading file:", err);
+    res.status(500).json({ message: "Error uploading file", error: err.message });
+  });
+});
+
+// Route for retrieving file
+app.get("/file/:id", async (req, res) => {
+  try {
+    const fileId = new mongoose.Types.ObjectId(req.params.id);
+    const downloadStream = gfsBucket.openDownloadStream(fileId);
+
+    downloadStream.on("error", (err) => {
+      console.error("Error retrieving file:", err);
+      res.status(500).json({ message: "Error retrieving file", error: err.message });
+    });
+
+    downloadStream.pipe(res);
+  } catch (err) {
+    console.error("Error retrieving file:", err);
+    res.status(500).json({ message: "Error retrieving file", error: err.message });
+  }
+});
 
 // Routes
 const roomRoutes = require("./routes/roomRoutes");
@@ -50,35 +78,14 @@ app.use("/api/interventions", interventionRoutes);
 const geminiRoutes = require("./routes/geminiRoutes");
 app.use("/api/gemini", geminiRoutes);
 
-// Routes pour fichiers
-app.post("/upload", upload.single("file"), (req, res) => {
-  res.status(201).json({ fileId: req.file.id, filename: req.file.filename });
-});
-
-app.get("/file/:id", async (req, res) => {
-  if (!gfs) {
-    return res.status(500).json({ message: "GridFS non initialisé" });
-  }
-  try {
-    const file = await gfs.files.findOne({ _id: mongoose.Types.ObjectId(req.params.id) });
-    if (!file) {
-      return res.status(404).json({ message: "Fichier introuvable" });
-    }
-    const readStream = gfs.createReadStream(file._id);
-    readStream.pipe(res);
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur", error: err.message });
-  }
-});
-
-// Middleware global pour les erreurs
+// Middleware global for errors
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: "Erreur serveur", error: err.message });
+  res.status(500).json({ message: "Server error", error: err.message });
 });
 
-// Démarrage du serveur
+// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
+  console.log(`Server started on port ${PORT}`);
 });
