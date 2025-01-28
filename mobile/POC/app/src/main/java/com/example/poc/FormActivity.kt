@@ -104,6 +104,23 @@ class FormActivity : AppCompatActivity() {
         var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
         val context = LocalContext.current
         var isRecording by remember { mutableStateOf(false) }
+        var showDialog by remember { mutableStateOf(false) }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Form Submitted") },
+                text = { Text("Your report has been submitted successfully.") },
+                confirmButton = {
+                    Button(onClick = {
+                        showDialog = false
+                        (context as? FormActivity)?.finish()
+                    }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -178,6 +195,7 @@ class FormActivity : AppCompatActivity() {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = {
                     submitReport(roomNumber, textFieldValue.text)
+                    showDialog = true
                 }) {
                     Text("Submit Report")
                 }

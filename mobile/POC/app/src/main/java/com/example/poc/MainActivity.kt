@@ -19,10 +19,11 @@ import androidx.core.app.ActivityCompat
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
-import androidx.compose.material3.Text
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var barcodeView: DecoratedBarcodeView
+
     private val requestCameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             // Vue pour scanner les QR codes
             AndroidView(
                 factory = { ctx ->
-                    val barcodeView = DecoratedBarcodeView(ctx)
+                    barcodeView = DecoratedBarcodeView(ctx)
                     barcodeView.decodeContinuous(object : BarcodeCallback {
                         override fun barcodeResult(result: BarcodeResult?) {
                             result?.let {
@@ -65,6 +66,7 @@ class MainActivity : AppCompatActivity() {
                                 val intent = Intent(context, FormActivity::class.java)
                                 intent.putExtra("roomNumber", roomNumber)
                                 context.startActivity(intent)
+                                stopQrCodeScanner()
                             }
                         }
 
@@ -80,13 +82,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun stopQrCodeScanner() {
+        barcodeView.pause()
+    }
+
     override fun onResume() {
         super.onResume()
-        // No need to manually resume the camera, handled in Compose
+        if (::barcodeView.isInitialized) {
+            barcodeView.resume()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        // No need to manually pause the camera, handled in Compose
+        if (::barcodeView.isInitialized) {
+            barcodeView.pause()
+        }
     }
 }
