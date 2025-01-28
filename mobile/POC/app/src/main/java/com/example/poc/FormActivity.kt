@@ -34,15 +34,29 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberImagePainter
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import android.util.Log
+import android.widget.Toast
+import okhttp3.MultipartBody
+import java.util.UUID
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 class FormActivity : AppCompatActivity() {
+    private lateinit var apiService: ApiService
     private lateinit var photoUri: Uri
     private val photos = mutableStateListOf<Uri>()
     private lateinit var speechRecognizer: SpeechRecognizer
+    private lateinit var currentPhotoPath: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +67,21 @@ class FormActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO_PERMISSION)
         }
+
+        // Initialize Retrofit with logging
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+
+        // Initialize Retrofit
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://192.168.43.194:3000/api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        apiService = retrofit.create(ApiService::class.java)
 
         setContent {
             FormScreen(roomNumber)
@@ -147,12 +176,9 @@ class FormActivity : AppCompatActivity() {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = {
-                    val intent = Intent(context, RecapActivity::class.java)
-                    intent.putExtra("text", textFieldValue.text)
-                    // Add photo paths to intent if needed
-                    context.startActivity(intent)
+                    submitReport(roomNumber, textFieldValue.text)
                 }) {
-                    Text("Submit Form")
+                    Text("Submit Report")
                 }
             }
         }
@@ -211,13 +237,52 @@ class FormActivity : AppCompatActivity() {
             "JPEG_${timeStamp}_",
             ".jpg",
             storageDir
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    private fun submitReport(roomNumber: String, notes: String) {
+        val finalNotes = if (notes.isBlank()) "No notes provided" else notes
+
+        val interventionId = UUID.randomUUID().toString()
+        val intervention = Intervention(
+            interventionId = interventionId,
+            roomId = roomNumber,
+            notes = finalNotes
         )
+        lifecycleScope.launch {
+            try {
+                Log.d("FormActivity", "Submitting report: $intervention")
+                val response = apiService.createIntervention(intervention)
+                if (response.isSuccessful) {
+                    Log.d("FormActivity", "Report submitted successfully")
+                    // Upload photos
+                    photos.forEach { uri ->
+                        val file = File(uri.path!!)
+                        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
+                        val uploadResponse = apiService.uploadMedia(intervention.interventionId, body)
+                        if (uploadResponse.isSuccessful) {
+                            Log.d("FormActivity", "Photo uploaded successfully: $uri")
+                        } else {
+                            Log.e("FormActivity", "Failed to upload photo: $uri")
+                        }
+                    }
+                } else {
+                    Log.e("FormActivity", "Failed to submit report: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("FormActivity", "Network error: ${e.message}", e)
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            photos.add(photoUri)
+            photos.add(Uri.fromFile(File(currentPhotoPath)))
         }
     }
 
