@@ -195,7 +195,6 @@ class FormActivity : AppCompatActivity() {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = {
                     submitReport(roomNumber, textFieldValue.text)
-                    showDialog = true
                 }) {
                     Text("Submit Report")
                 }
