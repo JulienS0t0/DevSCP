@@ -104,7 +104,6 @@ class FormActivity : AppCompatActivity() {
         var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
         val context = LocalContext.current
         var isRecording by remember { mutableStateOf(false) }
-        val textFieldState = remember { mutableStateOf(textFieldValue) }
 
         LazyColumn(
             modifier = Modifier
@@ -136,7 +135,9 @@ class FormActivity : AppCompatActivity() {
                             detectTapGestures(
                                 onLongPress = {
                                     isRecording = true
-                                    startListening(context, textFieldState)
+                                    startListening(context) { result ->
+                                        textFieldValue = textFieldValue.copy(text = textFieldValue.text + " " + result)
+                                    }
                                 },
                                 onPress = {
                                     tryAwaitRelease()
@@ -184,26 +185,45 @@ class FormActivity : AppCompatActivity() {
         }
     }
 
-    private fun startListening(context: Context, textFieldValue: MutableState<TextFieldValue>) {
+    private fun startListening(context: Context, onResult: (String) -> Unit) {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fr-FR")
         }
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) {}
-            override fun onBeginningOfSpeech() {}
-            override fun onRmsChanged(rmsdB: Float) {}
-            override fun onBufferReceived(buffer: ByteArray?) {}
-            override fun onEndOfSpeech() {}
-            override fun onError(error: Int) {}
+            override fun onReadyForSpeech(params: Bundle?) {
+                Log.d("SpeechRecognizer", "Ready for speech")
+            }
+            override fun onBeginningOfSpeech() {
+                Log.d("SpeechRecognizer", "Beginning of speech")
+            }
+            override fun onRmsChanged(rmsdB: Float) {
+                Log.d("SpeechRecognizer", "RMS changed: $rmsdB")
+            }
+            override fun onBufferReceived(buffer: ByteArray?) {
+                Log.d("SpeechRecognizer", "Buffer received")
+            }
+            override fun onEndOfSpeech() {
+                Log.d("SpeechRecognizer", "End of speech")
+            }
+            override fun onError(error: Int) {
+                Log.e("SpeechRecognizer", "Error: $error")
+            }
             override fun onResults(results: Bundle?) {
                 val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (!matches.isNullOrEmpty()) {
-                    textFieldValue.value = TextFieldValue(textFieldValue.value.text + " " + matches[0])
+                    Log.d("SpeechRecognizer", "Results: ${matches[0]}")
+                    onResult(matches[0])
+                } else {
+                    Log.d("SpeechRecognizer", "No results")
                 }
             }
-            override fun onPartialResults(partialResults: Bundle?) {}
-            override fun onEvent(eventType: Int, params: Bundle?) {}
+            override fun onPartialResults(partialResults: Bundle?) {
+                Log.d("SpeechRecognizer", "Partial results")
+            }
+            override fun onEvent(eventType: Int, params: Bundle?) {
+                Log.d("SpeechRecognizer", "Event: $eventType")
+            }
         })
         speechRecognizer.startListening(intent)
     }
