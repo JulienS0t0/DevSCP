@@ -1,3 +1,3 @@
 # DevSCP
 
-!INCLUDE "mobile/README.md"
+!INCLUDE "mobile/POC/README.md"
