@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.devscp.myapp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>MyApp</name>
+    <description>Sample Apache Cordova App</description>
+    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
+        Apache Cordova Team
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    
+    <!-- Autorisations nécessaires pour Android -->
+    <platform name="android">
+        <!-- Permission pour accéder à la caméra -->
+        <uses-permission android:name="android.permission.CAMERA" />
+        
+        <!-- Permission pour enregistrer des fichiers (utilisé pour les photos) -->
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        
+        <!-- Permission pour lire des fichiers -->
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        
+        <!-- Permission pour accéder au microphone -->
+        <uses-permission android:name="android.permission.RECORD_AUDIO" />
+        
+        <!-- Permission pour accéder à Internet (nécessaire pour la reconnaissance vocale) -->
+        <uses-permission android:name="android.permission.INTERNET" />
+    </platform>
+
+    <!-- Configuration des plugins -->
+    <plugin name="cordova-plugin-camera" source="npm" />
+    <plugin name="cordova-plugin-speechrecognition" source="npm" />
+
+    <!-- Intents pour gérer les URL -->
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+
+    <!-- Autorisation pour charger des fichiers externes -->
+    <allow-navigation href="*" />
+</widget>
