@@ -1,3 +1,5 @@
 # DevSCP
 
-!INCLUDE "mobile/POC/README.md"
+## 📂 Documentation Mobile POC
+
+[📄 POC Mobile](mobile/POC/README.md)
