@@ -29,8 +29,8 @@ Suivez le tutoriel officiel de Microsoft pour configurer un projet Unity avec le
 
 ## 5. Déploiement du projet sur l'Hololens
 
-- Sauvegardez et compilez le projet Unity.
-- Déployez l'application sur l'Hololens.
+- Sauvegardez et compilez le projet Unity
+- Déployez l'application sur l'Hololens
 
 ## 6. Fonctionnalités supplémentaires
 
