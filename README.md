@@ -1,4 +1,4 @@
 # DevSCP
 
-[📄 POC Mobile](mobile/POC/README.md)
-[📄 POC Server](server/README.md)
+- [📄 POC Mobile](mobile/POC/README.md)
+- [📄 POC Server](server/README.md)
