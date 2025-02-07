@@ -5,7 +5,7 @@
 Suivez le tutoriel officiel de Microsoft pour configurer un projet Unity avec les bibliothèques MRTK :  
 [Tutoriel Microsoft MRTK](https://learn.microsoft.com/en-us/training/modules/learn-mrtk-tutorials/)
 
-## 2. Connexion de l'Hololens
+## 2. Connexion à l'Hololens
 
 - Activez un point d'accès Wi-Fi sur votre ordinateur.
 - Connectez l'Hololens à ce réseau.
